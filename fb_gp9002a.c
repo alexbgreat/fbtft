@@ -30,7 +30,7 @@
 
 #include "fbtft.h"
 
-#define DRVNAME	       "fb_pcd8544"
+#define DRVNAME	       "fb_gp9002a"
 #define WIDTH          128
 #define HEIGHT         64
 #define TXBUFLEN       64*32

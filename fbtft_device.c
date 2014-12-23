@@ -658,6 +658,24 @@ static struct fbtft_device_display displays[] = {
 			}
 		}
 	}, {
+				.name = "gp9002a",
+		.spi = &(struct spi_board_info) {
+			.modalias = "fb_gp9002a",
+			.max_speed_hz = 400000,
+			.mode = SPI_MODE_0,
+			.platform_data = &(struct fbtft_platform_data) {
+				.display = {
+					.buswidth = 8,
+				},
+				.gpios = (const struct fbtft_gpio []) {
+					{ "reset", 25 },
+					{ "dc", 24 },
+					{ "led", 23 },
+					{},
+				},
+			}
+		}
+	}, {
 		.name = "nokia3310a",
 		.spi = &(struct spi_board_info) {
 			.modalias = "fb_tls8204",
