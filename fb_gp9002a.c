@@ -35,7 +35,7 @@
 #define HEIGHT         64
 #define TXBUFLEN       64*32
 #define DEFAULT_GAMMA  "40" /* gamma is used to control contrast in this driver */
-#define CNVT_RGB565_2BIT(x) (((x & 0x1F) >> 3)+((x >> 5) & 0x3F) >> 2) + ((x >> 11) & 0x1F) >> 3)) >> 6
+#define CNVT_RGB565_2BIT(x) (((x & 0x1F) >> 3) +(((x >> 5) & 0x3F) >> 2) + (((x >> 11) & 0x1F) >> 3)) >> 6
 
 /*
 * These register defines taken from Adafruit's GP9002A library 
@@ -172,16 +172,41 @@ static int write_vmem(struct fbtft_par *par, size_t offset, size_t len)
 	return ret;
 }
 
+
 static int set_gamma(struct fbtft_par *par, unsigned long *curves)
 {
+	/*Brightness values
+	 * Register 0x13
+	 * 0x00 / 0   - full brightness
+	 * 0x07 / 7   - 90 percent
+	 * 0x0E / 14  - 80 percent
+	 * 0x15 / 21  - 70 percent
+	 * 0x1C / 28  - 60 percent
+	 * 0x24 / 36  - 50 percent
+	 * 0x2B / 43  - 40 percent
+	 * 0x32 / 50  - 30 percent
+	 * 0xFF / 255 - Blank
+	 * Forumla is 
+	 * y = 255 for x = 255
+	 * y = (x/32 * 7) for y <= 28
+	 * y = (x/32 * 7)+1 for y > 28
+	 */
 	fbtft_par_dbg(DEBUG_INIT_DISPLAY, par, "%s()\n", __func__);
+	uint8_t lum_val, switch_val;
+	/* map values */
+	switch_val = (uint8_t) curves[0];
+	switch_val = ~switch_val; /* flip the values */
+	if(switch_val == 0){ /*if we have full brightness, go ahead and skip our multiplication step*/
+		lum_val = 0;
+		goto writeval;
+	}
+	switch_val = switch_val >> 5; /* shorthand divide by 32 */
+	lum_val = switch_val * 0x7; /* multiply by 7 to get proper value */
+	if(lum_val > 28) /* The brightness register follows multiples of 7 up until 35 (becomes 36 at this point) */
+		lum_val++; /*increment to match formula */
 
-	/* apply mask */
-	curves[0] >> 5;
-
-	write_reg(par, 0x23); /* turn on extended instruction set */
-	write_reg(par, 0x80 | curves[0]);
-	write_reg(par, 0x22); /* turn off extended instruction set */
+	:writeval
+	write_reg(par, GP9002_BRIGHT, lum_val); /* write the new value */
 
 	return 0;
 }
