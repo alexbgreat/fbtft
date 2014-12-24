@@ -205,7 +205,7 @@ static int set_gamma(struct fbtft_par *par, unsigned long *curves)
 	if(lum_val > 28) /* The brightness register follows multiples of 7 up until 35 (becomes 36 at this point) */
 		lum_val++; /*increment to match formula */
 
-	:writeval
+	writeval:
 	write_reg(par, GP9002_BRIGHT, lum_val); /* write the new value */
 
 	return 0;
