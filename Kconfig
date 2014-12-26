@@ -80,7 +80,7 @@ config FB_TFT_PCD8544
 	help
 	  Generic Framebuffer support for PCD8544
 
-	  config FB_TFT_GP9002A
+config FB_TFT_GP9002A
 	tristate "FB driver for the GP9002A VFD"
 	depends on FB_TFT
 	help
