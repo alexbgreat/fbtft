@@ -191,8 +191,9 @@ static int set_gamma(struct fbtft_par *par, unsigned long *curves)
 	 * y = (x/32 * 7) for y <= 28
 	 * y = (x/32 * 7)+1 for y > 28
 	 */
+ 	unsigned char lum_val, switch_val;
+ 	
 	fbtft_par_dbg(DEBUG_INIT_DISPLAY, par, "%s()\n", __func__);
-	unsigned int8_t lum_val, switch_val;
 	/* map values */
 	switch_val = (uint8_t) curves[0];
 	switch_val = ~switch_val; /* flip the values */
